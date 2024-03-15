@@ -1,0 +1,27 @@
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td,
+th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.input-button {
+    background-color: darkred;
+    color: white;
+    float: right;
+}
+
+.input-table {
+    margin-right: 25%;
+}
+
+.input-outside {
+    padding: 10px;
+    margin-bottom: 10px;
+}

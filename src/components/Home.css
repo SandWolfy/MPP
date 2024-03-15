@@ -1,0 +1,12 @@
+.page-header {
+    background-color: darkred;
+    color: white;
+    border: 5px solid transparent;
+    text-align: center;
+}
+
+.content {
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 15px;
+}
