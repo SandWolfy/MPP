@@ -4,10 +4,11 @@ import './MagicItemList.css'
 type Props = {
     list: IMagicItem[]
     onDeleteClickHnd: (data: IMagicItem) => void
+    onEditClickHnd: (data: IMagicItem) => void
 }
 
 function MagicItemList(props: Props) {
-    const { list, onDeleteClickHnd } = props
+    const { list, onDeleteClickHnd, onEditClickHnd } = props
 
     return (
         <>
@@ -29,7 +30,7 @@ function MagicItemList(props: Props) {
                             <td>
                                 <div>
                                     <input className='input-button input-table' type='button' value='Delete' onClick={() => onDeleteClickHnd(magicItem)} />
-                                    <input className='input-button input-table' type='button' value='Edit' />
+                                    <input className='input-button input-table' type='button' value='Edit' onClick={() => onEditClickHnd(magicItem)} />
                                 </div>
                             </td>
                         </tr>

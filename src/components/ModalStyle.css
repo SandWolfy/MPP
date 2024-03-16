@@ -1,12 +1,13 @@
-.add-background {
+.modal-background {
     background-color: black;
-    position: absolute;
+    position: fixed;
+    overflow: auto;
     opacity: 0.8;
     width: 100%;
     height: 100%;
 }
 
-.add-form {
+.modal-content {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -18,12 +19,12 @@
     text-align: center;
 }
 
-.form-text-input {
+.modal-text-input {
     height: 20px;
     margin: 5px;
 }
 
-.form-button-input {
+.modal-button-input {
     height: 25px;
     color: white;
     background-color: darkred;

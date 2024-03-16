@@ -6,7 +6,7 @@
     "bracketSpacing": true,
     "useTabs": false,
     "endOfLine": "auto",
-    "arrowParens": "always",
+    "arrowParens": "avoid",
     "semi": false,
     "max-line-length": [
         true,

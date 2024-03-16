@@ -3,17 +3,17 @@ import { IMagicItem } from './MagicItem'
 import './ModalStyle.css'
 
 type Props = {
+    data: IMagicItem
     onBackBtnClickHnd: () => void
     onSubmitHnd: (data: IMagicItem) => void
-    newID: number
 }
 
-function AddMagicItem(props: Props) {
-    const { onBackBtnClickHnd, onSubmitHnd, newID } = props
+function EditMagicItem(props: Props) {
+    const { data, onBackBtnClickHnd, onSubmitHnd } = props
 
-    const [name, setName] = useState('')
-    const [location, setLocation] = useState('')
-    const [classes, setClasses] = useState('')
+    const [name, setName] = useState(data.name)
+    const [location, setLocation] = useState(data.location)
+    const [classes, setClasses] = useState(data.usableClass)
 
     const onNameChangeHnd = (e: any) => {
         setName(e.target.value)
@@ -30,7 +30,7 @@ function AddMagicItem(props: Props) {
     const onSubmitClickHnd = (e: any) => {
         e.preventDefault()
         const newMagicItem: IMagicItem = {
-            id: newID,
+            id: data.id,
             name: name,
             location: location,
             usableClass: classes,
@@ -60,7 +60,7 @@ function AddMagicItem(props: Props) {
                     </div>
                     <div>
                         <input className='modal-button-input' type='button' value='Back' onClick={onBackBtnClickHnd} />
-                        <input className='modal-button-input' type='submit' value='Add Magic Item' />
+                        <input className='modal-button-input' type='submit' value='Update Magic Item' />
                     </div>
                 </form>
             </div>
@@ -68,4 +68,4 @@ function AddMagicItem(props: Props) {
     )
 }
 
-export default AddMagicItem
+export default EditMagicItem
