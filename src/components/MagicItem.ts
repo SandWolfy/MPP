@@ -3,4 +3,5 @@ export interface IMagicItem {
     name: string
     location: string
     usableClass: string
+    price: number
 }

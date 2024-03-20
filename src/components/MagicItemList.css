@@ -14,7 +14,6 @@ th {
 .input-button {
     background-color: darkred;
     color: white;
-    float: right;
 }
 
 .input-table {
@@ -24,4 +23,25 @@ th {
 .input-outside {
     padding: 10px;
     margin-bottom: 10px;
+}
+
+.selected-button {
+    background-color: red;
+    color: white;
+}
+
+.mt-10 {
+    margin-top: 10px;
+}
+
+.pr-6 {
+    padding-right: 6px;
+}
+
+.pl-6 {
+    padding-left: 6px;
+}
+
+.float-right {
+    float: right;
 }

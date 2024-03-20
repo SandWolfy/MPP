@@ -14,6 +14,7 @@ function EditMagicItem(props: Props) {
     const [name, setName] = useState(data.name)
     const [location, setLocation] = useState(data.location)
     const [classes, setClasses] = useState(data.usableClass)
+    const [price, setPrice] = useState(data.price)
 
     const onNameChangeHnd = (e: any) => {
         setName(e.target.value)
@@ -27,6 +28,10 @@ function EditMagicItem(props: Props) {
         setClasses(e.target.value)
     }
 
+    const onPriceChangeHnd = (e: any) => {
+        setPrice(e.target.value)
+    }
+
     const onSubmitClickHnd = (e: any) => {
         e.preventDefault()
         const newMagicItem: IMagicItem = {
@@ -34,6 +39,7 @@ function EditMagicItem(props: Props) {
             name: name,
             location: location,
             usableClass: classes,
+            price: price,
         }
 
         onSubmitHnd(newMagicItem)
@@ -43,7 +49,7 @@ function EditMagicItem(props: Props) {
     return (
         <>
             <div className='modal-background'></div>
-            <div className='modal-content'>
+            <div className='modal-content modal-small'>
                 <h3>Add Magic Item Form</h3>
                 <form onSubmit={onSubmitClickHnd}>
                     <div>
@@ -57,6 +63,10 @@ function EditMagicItem(props: Props) {
                     <div>
                         <label>Usable Classes: </label>
                         <input className='modal-text-input' type='text' value={classes} onChange={onClassChangeHnd} />
+                    </div>
+                    <div>
+                        <label>Price: </label>
+                        <input className='modal-text-input' type='text' value={price} onChange={onPriceChangeHnd} />
                     </div>
                     <div>
                         <input className='modal-button-input' type='button' value='Back' onClick={onBackBtnClickHnd} />

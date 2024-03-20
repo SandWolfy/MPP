@@ -13,10 +13,17 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 50%;
-    height: 30vh;
     background-color: #242424;
     border: 5px solid darkred;
     text-align: center;
+}
+
+.modal-small {
+    height: 35vh;
+}
+
+.modal-big {
+    height: 68vh;
 }
 
 .modal-text-input {
@@ -29,4 +36,9 @@
     color: white;
     background-color: darkred;
     margin-left: 15px;
+}
+
+.chart-stuff {
+    width: 10%;
+    height: 10%;
 }
