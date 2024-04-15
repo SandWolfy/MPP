@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useState } from 'react'
 import { IMagicItem } from './MagicItem'
 import './ModalStyle.css'
@@ -5,11 +6,10 @@ import './ModalStyle.css'
 type Props = {
     onBackBtnClickHnd: () => void
     onSubmitHnd: (data: IMagicItem) => void
-    newID: number
 }
 
 function AddMagicItem(props: Props) {
-    const { onBackBtnClickHnd, onSubmitHnd, newID } = props
+    const { onBackBtnClickHnd, onSubmitHnd } = props
 
     const [name, setName] = useState('')
     const [location, setLocation] = useState('')
@@ -34,15 +34,17 @@ function AddMagicItem(props: Props) {
 
     const onSubmitClickHnd = (e: any) => {
         e.preventDefault()
-        const newMagicItem: IMagicItem = {
-            id: newID,
+        const newMagicItem = {
             name: name,
             location: location,
             usableClass: classes,
             price: price,
         }
 
-        onSubmitHnd(newMagicItem)
+        axios.post('//localhost:4000', newMagicItem).then(res => {
+            onSubmitHnd(res.data)
+        })
+
         onBackBtnClickHnd()
     }
 

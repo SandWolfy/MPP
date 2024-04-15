@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useEffect, useState } from 'react'
 import AddMagicItem from './AddMagicItem'
 import ChartMagicItem from './ChartMagicItem'
@@ -5,10 +6,10 @@ import EditMagicItem from './EditMagicItem'
 import './Home.css'
 import { IMagicItem } from './MagicItem'
 import MagicItemList from './MagicItemList'
+import NetworkStatusChecker from './NetworkStatusChecker'
 
 function Home() {
     const [itemList, setItemList] = useState([] as IMagicItem[])
-    const [nextID, setNextID] = useState(0)
 
     const [showAdd, setShowAdd] = useState(false)
     const [showEdit, setShowEdit] = useState(false)
@@ -18,19 +19,10 @@ function Home() {
     const [filterData, setFilterData] = useState('')
 
     useEffect(() => {
-        const listInString = window.localStorage.getItem('ItemList')
-        if (listInString) {
-            setItemList(JSON.parse(listInString))
-            const nextIDInString = window.localStorage.getItem('NextID')
-            if (nextIDInString) setNextID(JSON.parse(nextIDInString))
-        }
+        axios.get('//localhost:4000/faker/100').then(res => {
+            setItemList(res.data)
+        })
     }, [])
-
-    const _setItemList = (list: IMagicItem[]) => {
-        setItemList(list)
-        window.localStorage.setItem('ItemList', JSON.stringify(list))
-        window.localStorage.setItem('NextID', JSON.stringify(nextID + 1))
-    }
 
     const changeAddVisiblity = () => {
         setShowAdd(!showAdd)
@@ -45,16 +37,13 @@ function Home() {
     }
 
     const addMagicItemHnd = (data: IMagicItem) => {
-        _setItemList([...itemList, data])
-        setNextID(nextID + 1)
+        setItemList([...itemList, data])
     }
 
     const deleteMagicItemHnd = (data: IMagicItem) => {
-        const indexToDelete = itemList.indexOf(data)
-        const tempList = [...itemList]
-
-        tempList.splice(indexToDelete, 1)
-        _setItemList(tempList)
+        axios.delete('//localhost:4000/' + data.id).then(res => {
+            setItemList(res.data)
+        })
     }
 
     const editMagicItemHnd = (data: IMagicItem) => {
@@ -63,13 +52,9 @@ function Home() {
     }
 
     const updateMagicItemHnd = (data: IMagicItem) => {
-        const filteredData = itemList.filter(x => x.id == data.id)[0]
-        const indexToUpdate = itemList.indexOf(filteredData)
-
-        const tempData = [...itemList]
-        tempData[indexToUpdate] = data
-
-        _setItemList(tempData)
+        axios.put('//localhost:4000/' + data.id, data).then(res => {
+            setItemList(res.data)
+        })
     }
 
     const onFilterChangeHnd = (e: any) => {
@@ -78,9 +63,10 @@ function Home() {
 
     return (
         <>
-            {showAdd && <AddMagicItem onBackBtnClickHnd={changeAddVisiblity} onSubmitHnd={addMagicItemHnd} newID={nextID} />}
+            {showAdd && <AddMagicItem onBackBtnClickHnd={changeAddVisiblity} onSubmitHnd={addMagicItemHnd} />}
             {showEdit && <EditMagicItem data={editData} onBackBtnClickHnd={changeEditVisiblity} onSubmitHnd={updateMagicItemHnd} />}
             {showChart && <ChartMagicItem list={itemList} onCloseBtnClickHnd={changeChartVisibility} />}
+            <NetworkStatusChecker />
 
             <header className='page-header'>
                 <h1>Magic Items</h1>
