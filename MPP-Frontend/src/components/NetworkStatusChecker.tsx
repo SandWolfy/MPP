@@ -22,7 +22,7 @@ function NetworkStatusChecker() {
     useEffect(() => {
         const checkServerStatus = async () => {
             try {
-                await axios.get('//localhost:4000')
+                await axios.get('//localhost:3000')
                 setServerStatus(true)
             } catch (e) {
                 setServerStatus(false)

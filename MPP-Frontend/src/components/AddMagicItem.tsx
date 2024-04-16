@@ -41,7 +41,7 @@ function AddMagicItem(props: Props) {
             price: price,
         }
 
-        axios.post('//localhost:4000', newMagicItem).then(res => {
+        axios.post('//localhost:3000', newMagicItem).then(res => {
             onSubmitHnd(res.data)
         })
 

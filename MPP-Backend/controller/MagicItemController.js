@@ -55,21 +55,22 @@ const deleteMagicItem = (req, res) => {
 const getFakerData = (req, res) => {
     const requestedCount = req.params.count;
 
-    const fakerData = [];
     for (let i = 0; i < requestedCount; i++)
-    {
-        const fakerItem = {
-            id: uuid(),
-            name: faker.person.fullName(),
-            location: faker.location.country(),
-            usableClass: faker.color.human(),
-            price: faker.number.float(),
-        }
+        addFakerItem()
 
-        fakerData.push(fakerItem)
+    res.send(MAGICITEMS)
+}
+
+const addFakerItem = () => {
+    const fakerItem = {
+        id: uuid(),
+        name: faker.person.fullName(),
+        location: faker.location.country(),
+        usableClass: faker.color.human(),
+        price: faker.number.float(),
     }
 
-    res.send(fakerData)
+    MAGICITEMS.push(fakerItem)
 }
 
 module.exports = {
@@ -79,4 +80,5 @@ module.exports = {
     editMagicItem,
     deleteMagicItem,
     getFakerData,
+    addFakerItem,
 }

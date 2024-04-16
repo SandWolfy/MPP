@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { io } from 'socket.io-client'
 import AddMagicItem from './AddMagicItem'
 import ChartMagicItem from './ChartMagicItem'
 import EditMagicItem from './EditMagicItem'
@@ -19,10 +20,24 @@ function Home() {
     const [filterData, setFilterData] = useState('')
 
     useEffect(() => {
-        axios.get('//localhost:4000/faker/100').then(res => {
+        axios.get('//localhost:3000/').then(res => {
             setItemList(res.data)
         })
     }, [])
+
+    useEffect(() => {
+        const socket = io('//localhost:3000')
+
+        socket.on('entityAdded', () => {
+            axios.get('//localhost:3000/').then(res => {
+                setItemList(res.data)
+            })
+        })
+
+        return () => {
+            socket.disconnect()
+        }
+    })
 
     const changeAddVisiblity = () => {
         setShowAdd(!showAdd)
@@ -41,7 +56,7 @@ function Home() {
     }
 
     const deleteMagicItemHnd = (data: IMagicItem) => {
-        axios.delete('//localhost:4000/' + data.id).then(res => {
+        axios.delete('//localhost:3000/' + data.id).then(res => {
             setItemList(res.data)
         })
     }
@@ -52,7 +67,7 @@ function Home() {
     }
 
     const updateMagicItemHnd = (data: IMagicItem) => {
-        axios.put('//localhost:4000/' + data.id, data).then(res => {
+        axios.put('//localhost:3000/' + data.id, data).then(res => {
             setItemList(res.data)
         })
     }
