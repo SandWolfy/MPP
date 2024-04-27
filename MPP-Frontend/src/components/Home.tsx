@@ -1,5 +1,4 @@
-import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 import AddMagicItem from './AddMagicItem'
 import ChartMagicItem from './ChartMagicItem'
@@ -8,9 +7,16 @@ import './Home.css'
 import { IMagicItem } from './MagicItem'
 import MagicItemList from './MagicItemList'
 import NetworkStatusChecker from './NetworkStatusChecker'
+import { MagicItemContext } from '../main'
 
 function Home() {
-    const [itemList, setItemList] = useState([] as IMagicItem[])
+    const context = useContext(MagicItemContext)
+
+    if (!context) {
+        throw Error("useMagicItemContext can only be used inside a MagicItemProvider")
+    }
+
+    const { itemList, addMagicItemHnd, deleteMagicItemHnd, updateMagicItemHnd, getMagicItemHnd } = context;
 
     const [showAdd, setShowAdd] = useState(false)
     const [showEdit, setShowEdit] = useState(false)
@@ -20,18 +26,10 @@ function Home() {
     const [filterData, setFilterData] = useState('')
 
     useEffect(() => {
-        axios.get('//localhost:3000/').then(res => {
-            setItemList(res.data)
-        })
-    }, [])
-
-    useEffect(() => {
         const socket = io('//localhost:3000')
 
         socket.on('entityAdded', () => {
-            axios.get('//localhost:3000/').then(res => {
-                setItemList(res.data)
-            })
+            getMagicItemHnd();
         })
 
         return () => {
@@ -51,27 +49,10 @@ function Home() {
         setShowChart(!showChart)
     }
 
-    const addMagicItemHnd = (data: IMagicItem) => {
-        setItemList([...itemList, data])
-    }
-
-    const deleteMagicItemHnd = (data: IMagicItem) => {
-        axios.delete('//localhost:3000/' + data.id).then(res => {
-            setItemList(res.data)
-        })
-    }
-
     const editMagicItemHnd = (data: IMagicItem) => {
         changeEditVisiblity()
         setEditData(data)
     }
-
-    const updateMagicItemHnd = (data: IMagicItem) => {
-        axios.put('//localhost:3000/' + data.id, data).then(res => {
-            setItemList(res.data)
-        })
-    }
-
     const onFilterChangeHnd = (e: any) => {
         setFilterData(e.target.value)
     }

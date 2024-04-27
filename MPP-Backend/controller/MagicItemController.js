@@ -55,10 +55,21 @@ const deleteMagicItem = (req, res) => {
 const getFakerData = (req, res) => {
     const requestedCount = req.params.count;
 
+    const fakerData = [];
     for (let i = 0; i < requestedCount; i++)
-        addFakerItem()
+    {
+        const fakerItem = {
+            id: uuid(),
+            name: faker.person.fullName(),
+            location: faker.location.country(),
+            usableClass: faker.color.human(),
+            price: faker.number.float(),
+        }
 
-    res.send(MAGICITEMS)
+        fakerData.push(fakerItem)
+    }
+
+    res.send(fakerData)
 }
 
 const addFakerItem = () => {

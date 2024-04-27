@@ -3,7 +3,6 @@ const cors = require("cors");
 const bodyParser = require("body-parser")
 const router = require("./routes/router")
 const { Server } = require('socket.io');
-const { addFakerItem } = require("./controller/MagicItemController");
 
 const app = express();
 const server = require("http").createServer(app)
@@ -21,9 +20,9 @@ server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
 
-const sendSignal = () => {
-    addFakerItem()
-    io.emit('entityAdded');
-}
+// const sendSignal = () => {
+//     addFakerItem()
+//     io.emit('entityAdded');
+// }
 
-setInterval(sendSignal, 1000)
+//setInterval(sendSignal, 1000)
