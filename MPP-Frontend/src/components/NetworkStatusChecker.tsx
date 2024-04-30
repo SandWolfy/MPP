@@ -1,28 +1,42 @@
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { ReactNode, createContext, useEffect, useState } from 'react'
 
-function NetworkStatusChecker() {
-    const [internetStatus, setInternetStatus] = useState(navigator.onLine)
-    const [serverStatus, setServerStatus] = useState(true)
+interface INetworkContext {
+    storageLocation: string
+}
+
+const NetworkContext = createContext<INetworkContext | undefined>(undefined)
+
+interface NetworkProviderProps {
+    children: ReactNode
+}
+
+const NetworkProvider = ({ children }: NetworkProviderProps) => {
+    const [internetStatus, setInternetStatus] = useState(false)
+    const [serverStatus, setServerStatus] = useState(false)
+    const [storageLocation, setStorageLocation] = useState('local')
 
     useEffect(() => {
-        const handleOnlineStatus = () => {
-            setInternetStatus(navigator.onLine)
+        const checkOnlineStatus = async () => {
+            try {
+                const response = await fetch('https://www.example.com', { method: 'HEAD' })
+                setInternetStatus(response.status >= 200 && response.status < 300)
+            } catch (error) {
+                setInternetStatus(false)
+            }
         }
 
-        window.addEventListener('online', handleOnlineStatus)
-        window.addEventListener('offline', handleOnlineStatus)
+        checkOnlineStatus()
 
-        return () => {
-            window.removeEventListener('online', handleOnlineStatus)
-            window.removeEventListener('offline', handleOnlineStatus)
-        }
+        const interval = setInterval(checkOnlineStatus, 1000)
+
+        return () => clearInterval(interval)
     }, [])
 
     useEffect(() => {
         const checkServerStatus = async () => {
             try {
-                await axios.get('//localhost:3000')
+                await axios.get('//localhost:3000/items')
                 setServerStatus(true)
             } catch (e) {
                 setServerStatus(false)
@@ -31,31 +45,22 @@ function NetworkStatusChecker() {
 
         checkServerStatus()
 
-        const interval = setInterval(checkServerStatus, 5000)
+        const interval = setInterval(checkServerStatus, 1000)
 
         return () => clearInterval(interval)
     }, [])
 
-    return (
-        <>
-            {!internetStatus && (
-                <div>
-                    <div className='modal-background' />
-                    <div className='modal-content'>
-                        <h2>INTERNET IS DOWN!</h2>
-                    </div>
-                </div>
-            )}
-            {!serverStatus && (
-                <div>
-                    <div className='modal-background' />
-                    <div className='modal-content'>
-                        <h2>SERVER IS DOWN!</h2>
-                    </div>
-                </div>
-            )}
-        </>
-    )
+    useEffect(() => {
+        const intervalStorageChanges = () => {
+            setStorageLocation(internetStatus && serverStatus ? 'server' : 'local')
+        }
+
+        const interval = setInterval(intervalStorageChanges, 1000)
+
+        return () => clearInterval(interval)
+    }, [internetStatus, serverStatus])
+
+    return <NetworkContext.Provider value={{ storageLocation }}>{children}</NetworkContext.Provider>
 }
 
-export default NetworkStatusChecker
+export { NetworkContext, NetworkProvider }

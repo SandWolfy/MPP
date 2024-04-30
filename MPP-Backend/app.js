@@ -25,4 +25,4 @@ server.listen(PORT, () => {
 //     io.emit('entityAdded');
 // }
 
-//setInterval(sendSignal, 1000)
+// setInterval(sendSignal, 5000)

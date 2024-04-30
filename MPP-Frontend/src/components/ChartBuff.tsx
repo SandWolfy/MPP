@@ -1,16 +1,16 @@
 import { Chart as ChartJS } from 'chart.js/auto'
 import { Bar } from 'react-chartjs-2'
-import { IMagicItem } from './Interfaces'
+import { IBuff } from './Interfaces'
 import './ModalStyle.css'
 
 ChartJS.register()
 
 type Props = {
-    list: IMagicItem[]
+    list: IBuff[]
     onCloseBtnClickHnd: () => void
 }
 
-function ChartMagicItem(props: Props) {
+function ChartBuff(props: Props) {
     const { list, onCloseBtnClickHnd } = props
 
     return (
@@ -20,11 +20,11 @@ function ChartMagicItem(props: Props) {
                 <h3>Bar Chart</h3>
                 <Bar
                     data={{
-                        labels: list.map(magicItem => magicItem.name),
+                        labels: list.map(buff => buff.name),
                         datasets: [
                             {
-                                label: 'Price',
-                                data: list.map(magicItem => magicItem.price),
+                                label: 'Intensity',
+                                data: list.map(buff => buff.intensity),
                             },
                         ],
                     }}
@@ -36,4 +36,4 @@ function ChartMagicItem(props: Props) {
     )
 }
 
-export default ChartMagicItem
+export default ChartBuff

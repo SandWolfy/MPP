@@ -6,8 +6,6 @@ const {
     deleteMagicItem
 } = require('./MagicItemController');
 
-const MAGICITEMS = require('../model/magic_item');
-
 describe('Magic Item Controller Tests', () => {
     let mockReq;
     let mockRes;

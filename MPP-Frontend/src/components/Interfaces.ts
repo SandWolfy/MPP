@@ -5,3 +5,10 @@ export interface IMagicItem {
     usableClass: string
     price: number
 }
+
+export interface IBuff {
+    bid: number
+    mid: number
+    name: string
+    intensity: number
+}

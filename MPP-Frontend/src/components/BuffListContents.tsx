@@ -1,23 +1,22 @@
-import { IMagicItem } from './Interfaces'
+import { IBuff } from './Interfaces'
 
 type Props = {
-    list: IMagicItem[]
-    onDeleteClickHnd: (data: IMagicItem) => void
-    onEditClickHnd: (data: IMagicItem) => void
+    list: IBuff[]
+    onDeleteClickHnd: (data: IBuff) => void
+    onEditClickHnd: (data: IBuff) => void
 }
 
-function MagicItemListContents(props: Props) {
+function BuffListContents(props: Props) {
     const { list, onDeleteClickHnd, onEditClickHnd } = props
 
     return (
         <>
             {list.map(magicItem => {
                 return (
-                    <tr key={magicItem.id}>
+                    <tr key={magicItem.bid}>
+                        <td>{magicItem.mid}</td>
                         <td>{magicItem.name}</td>
-                        <td>{magicItem.location}</td>
-                        <td>{magicItem.usableClass}</td>
-                        <td>{magicItem.price}</td>
+                        <td>{magicItem.intensity}</td>
                         <td>
                             <div>
                                 <input className='input-button input-table float-right' type='button' value='Delete' onClick={() => onDeleteClickHnd(magicItem)} />
@@ -31,4 +30,4 @@ function MagicItemListContents(props: Props) {
     )
 }
 
-export default MagicItemListContents
+export default BuffListContents

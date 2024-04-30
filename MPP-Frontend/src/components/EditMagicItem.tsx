@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { IMagicItem } from './MagicItem'
+import { IMagicItem } from './Interfaces'
 import './ModalStyle.css'
 
 type Props = {
@@ -50,7 +50,7 @@ function EditMagicItem(props: Props) {
         <>
             <div className='modal-background'></div>
             <div className='modal-content modal-small'>
-                <h3>Add Magic Item Form</h3>
+                <h3>Edit Magic Item Form</h3>
                 <form onSubmit={onSubmitClickHnd}>
                     <div>
                         <label>Name: </label>

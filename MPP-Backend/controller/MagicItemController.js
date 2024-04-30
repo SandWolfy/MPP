@@ -1,56 +1,162 @@
 const {v4:uuid} = require('uuid');
-const MAGICITEMS = require('../model/magic_item');
-const {fakerEN:faker} = require('@faker-js/faker');
+const { fakerEN: faker } = require("@faker-js/faker");
+const sql = require("mssql/msnodesqlv8");
 
-const getAllMagicItems = (req, res) => {
-    res.send(MAGICITEMS)
+var config = {
+    connectionString: "Driver={ODBC Driver 17 for SQL Server};Server=David\\SQLEXPRESS;Database=MPP;Trusted_Connection=yes;",
+};
+
+async function getAllMagicItemsAsync() {
+    const pool = await sql.connect(config);
+    const result = await pool.request().query(`SELECT * FROM MagicItem`);
+    await pool.close();
+    return result.recordset;
 }
 
-const getMagicItemByID = (req, res) => {
-    const requestID = req.params.id;
-    
-    var magicItem = MAGICITEMS.filter(x => x.id == requestID)[0]
-    if (!magicItem) res.status(404).json('No record with given ID')
-
-    res.send(magicItem)
-}
-
-const createMagicItem = (req, res) => {
-    const id = uuid();
-    const item = req.body;
-
-    const newItem = {
-        ...item,
-        id,
+async function getRowCount() {
+    try {
+        const pool = await sql.connect(config);
+        const result = await pool.request().query(`SELECT COUNT(*) as rCount FROM MagicItem`);
+        const rows = result.recordset[0];
+        await sql.close();
+        return rows.rCount;
+    } catch (error) {
+        console.error("Error executing query:", error.message);
+        throw error;
     }
-    MAGICITEMS.push(newItem);
-    res.send(newItem);
 }
 
-const editMagicItem = (req, res) => {
+const getAllMagicItems = async (req, res) => {
+    const CLIENTS = await getAllMagicItemsAsync();
+    res.send(CLIENTS);
+};
+
+async function getMagicItemByIDAsync(id) {
+    const pool = await sql.connect(config);
+    const result = await pool.request().query(`SELECT * FROM MagicItem WHERE id = '${id}'`);
+    await pool.close();
+    return result.recordset;
+}
+
+const getMagicItemByID = async (req, res) => {
+    const requestID = req.params.id;
+
+    var magicItem = await getMagicItemByIDAsync(requestID);
+    if (!magicItem) res.status(404).json("No record with given ID");
+
+    res.send(magicItem);
+};
+
+async function createMagicItemAsync(id, newName, newLocation, newClass, newPrice) {
+    const pool = await sql.connect(config);
+    const result = await pool.request().query(`INSERT INTO MagicItem VALUES(${id}, '${newName}', '${newLocation}', '${newClass}', ${newPrice})`);
+    await pool.close();
+    return result.rowsAffected;
+}
+
+const createMagicItem = async (req, res) => {
+    var id = await getRowCount();
+    const item = req.body;
+    if (item.name == "") {
+        console.error("No name provided for the magic item");
+        return;
+    }
+    if (item.location == "") {
+        console.error("No location provided for the magic item");
+        return;
+    }
+    if (item.usableClass == "") {
+        console.error("No class provided for the magic item");
+        return;
+    }
+    if (isNaN(Number(item.price)) || Number(item.price) < 0) {
+        console.error("The price was not provided or it was smaller than 0");
+        return;
+    }
+    try {
+        await createMagicItemAsync(Number(id), item.name, item.location, item.usableClass, Number(item.price));
+    } catch (error) {
+        console.error("Error while adding the magic item!", error);
+        return;
+    }
+    res.send(item);
+};
+
+async function editMagicItemAsync(id, newName, newLocation, newClass, newPrice) {
+    const pool = await sql.connect(config);
+    const result = await pool.request().query(`UPDATE MagicItem SET [name] = '${newName}', [location] = '${newLocation}', usableClass = '${newClass}', price = ${newPrice} WHERE id = '${id}'`);
+    await pool.close();
+    return result.rowsAffected;
+}
+
+async function clientNotExists(id) {
+    const pool = await sql.connect(config);
+    const result = await pool.request().query(`SELECT * FROM MagicItem WHERE id = '${id}'`);
+    await pool.close();
+    return result.recordset.length == 0;
+}
+
+const editMagicItem = async (req, res) => {
     const item = req.body;
     const id = req.params.id;
 
-    const magicItem = MAGICITEMS.filter(x => x.id == id)[0]
-    if (!magicItem) res.status(404).json('No record with given ID')
+    if (item.name == "") {
+        console.error("No name provided for the magic item");
+        return;
+    }
+    if (item.location == "") {
+        console.error("No location provided for the magic item");
+        return;
+    }
+    if (item.usableClass == "") {
+        console.error("No class provided for the magic item");
+        return;
+    }
+    if (isNaN(Number(item.price)) || Number(item.price) < 0) {
+        console.error("The price was not provided or it was smaller than 0");
+        return;
+    }
+    try {
+        const result = await clientNotExists(Number(id));
+        if (result == true) {
+            console.error("There is no magic item with the provided ID!");
+            return;
+        }
+    } catch (error) {
+        console.error("Error retrieving magic items", error);
+        return;
+    }
+    try {
+        await editMagicItemAsync(Number(id), item.name, item.location, item.usableClass, Number(item.price));
+    } catch (error) {
+        console.error("Error while updating magic items", error);
+        return;
+    }
+    const result = await getAllMagicItemsAsync();
+    res.send(result);
+};
 
-    const indexToUpdate = MAGICITEMS.indexOf(magicItem)
-    MAGICITEMS[indexToUpdate] = item
-
-    res.send(MAGICITEMS);
+async function deleteMagicItemAsync(id) {
+    const pool = await sql.connect(config);
+    const result = await pool.request().query(`DELETE FROM MagicItem WHERE id = ${id}`);
+    await pool.close();
+    return result.rowsAffected;
 }
 
-const deleteMagicItem = (req, res) => {
+const deleteMagicItem = async (req, res) => {
     const deleteID = req.params.id;
 
-    var magicItem = MAGICITEMS.filter(x => x.id == deleteID)[0]
-    if (!magicItem) res.status(404).json('No record with given ID')
-
-    var itemIndex = MAGICITEMS.indexOf(magicItem);
-    MAGICITEMS.splice(itemIndex, 1);
-    
-    res.send(MAGICITEMS);
-}
+    try {
+        const aux = await deleteMagicItemAsync(Number(deleteID));
+        if (aux == 0) {
+            console.error("Error deleting the magic item");
+        }
+        const result = await getAllMagicItemsAsync();
+        res.status(200).send(result);
+    } catch (error) {
+        console.error("Error deleting magic item.", error);
+    }
+};
 
 const getFakerData = (req, res) => {
     const requestedCount = req.params.count;
@@ -72,16 +178,14 @@ const getFakerData = (req, res) => {
     res.send(fakerData)
 }
 
-const addFakerItem = () => {
-    const fakerItem = {
-        id: uuid(),
-        name: faker.person.fullName(),
-        location: faker.location.country(),
-        usableClass: faker.color.human(),
-        price: faker.number.float(),
-    }
+const addFakerItem = async () => {
+    var id = await getRowCount();
+    var name = faker.person.fullName();
+    var location = faker.location.country();
+    var usableClass = faker.color.human();
+    var price = faker.number.float();
 
-    MAGICITEMS.push(fakerItem)
+    await createMagicItemAsync(Number(id), name, location, usableClass, Number(price));
 }
 
 module.exports = {
@@ -92,4 +196,4 @@ module.exports = {
     deleteMagicItem,
     getFakerData,
     addFakerItem,
-}
+};

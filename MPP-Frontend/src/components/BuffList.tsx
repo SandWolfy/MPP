@@ -1,16 +1,16 @@
 import { useState } from 'react'
-import { IMagicItem } from './Interfaces'
+import BuffListContents from './BuffListContents'
+import { IBuff } from './Interfaces'
 import './MagicItemList.css'
-import MagicItemListContents from './MagicItemListContents'
 
 type Props = {
-    list: IMagicItem[]
+    list: IBuff[]
     filter: string
-    onDeleteClickHnd: (data: IMagicItem) => void
-    onEditClickHnd: (data: IMagicItem) => void
+    onDeleteClickHnd: (data: IBuff) => void
+    onEditClickHnd: (data: IBuff) => void
 }
 
-function MagicItemList(props: Props) {
+function BuffList(props: Props) {
     const { list, filter, onDeleteClickHnd, onEditClickHnd } = props
 
     const [currentPage, setCurrentPage] = useState(1)
@@ -50,13 +50,12 @@ function MagicItemList(props: Props) {
         <>
             <table>
                 <tr>
+                    <td>ItemID</td>
                     <td>Name</td>
-                    <td>Location</td>
-                    <td>Usable Classes</td>
-                    <td>Price</td>
+                    <td>Intensity</td>
                     <td>Actions</td>
                 </tr>
-                <MagicItemListContents list={records} onDeleteClickHnd={onDeleteClickHnd} onEditClickHnd={onEditClickHnd} />
+                <BuffListContents list={records} onDeleteClickHnd={onDeleteClickHnd} onEditClickHnd={onEditClickHnd} />
             </table>
             <div>
                 <input className='input-button' type='button' value='<' onClick={prevPage} />
@@ -69,4 +68,4 @@ function MagicItemList(props: Props) {
     )
 }
 
-export default MagicItemList
+export default BuffList

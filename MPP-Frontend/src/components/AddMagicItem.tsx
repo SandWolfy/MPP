@@ -1,11 +1,9 @@
-import axios from 'axios'
 import { useState } from 'react'
-import { IMagicItem } from './MagicItem'
 import './ModalStyle.css'
 
 type Props = {
     onBackBtnClickHnd: () => void
-    onSubmitHnd: (data: IMagicItem) => void
+    onSubmitHnd: (data: any) => void
 }
 
 function AddMagicItem(props: Props) {
@@ -41,10 +39,7 @@ function AddMagicItem(props: Props) {
             price: price,
         }
 
-        axios.post('//localhost:3000', newMagicItem).then(res => {
-            onSubmitHnd(res.data)
-        })
-
+        onSubmitHnd(newMagicItem)
         onBackBtnClickHnd()
     }
 
