@@ -10,6 +10,7 @@ import EditBuff from './EditBuff'
 import EditMagicItem from './EditMagicItem'
 import './Home.css'
 import { IBuff, IMagicItem } from './Interfaces'
+import LoginComponent from './LoginComponent'
 import MagicItemList from './MagicItemList'
 
 function Home() {
@@ -36,6 +37,7 @@ function Home() {
     const [showAdd, setShowAdd] = useState(false)
     const [showEdit, setShowEdit] = useState(false)
     const [showChart, setShowChart] = useState(false)
+    const [showLogin, setShowLogin] = useState(false)
 
     const [editItemData, setEditItemData] = useState({} as IMagicItem)
     const [editBuffData, setEditBuffData] = useState({} as IBuff)
@@ -66,6 +68,10 @@ function Home() {
         setShowChart(!showChart)
     }
 
+    const changeLoginVisiblity = () => {
+        setShowLogin(!showLogin)
+    }
+
     const editMagicItemHnd = (data: IMagicItem) => {
         changeEditVisiblity()
         setEditItemData(data)
@@ -82,6 +88,8 @@ function Home() {
 
     return (
         <>
+            {showLogin && <LoginComponent onBackBtnClickHnd={changeLoginVisiblity} />}
+
             {currentScreen == 'items' && (
                 <>
                     {showAdd && <AddMagicItem onBackBtnClickHnd={changeAddVisiblity} onSubmitHnd={addMagicItemHnd} />}
@@ -90,6 +98,7 @@ function Home() {
 
                     <header className='page-header'>
                         <h1>Magic Items</h1>
+                        <img src='person.png' className='person-picture' onClick={changeLoginVisiblity} />
                     </header>
 
                     <section className='content'>
@@ -110,6 +119,7 @@ function Home() {
 
                     <header className='page-header'>
                         <h1>Buffs</h1>
+                        <img src='person.png' className='person-picture' onClick={changeLoginVisiblity} />
                     </header>
 
                     <section className='content'>

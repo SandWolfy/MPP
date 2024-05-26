@@ -12,3 +12,10 @@ export interface IBuff {
     name: string
     intensity: number
 }
+
+export interface IUser {
+    id: number
+    username: string
+    password: string
+    description: string
+}

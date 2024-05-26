@@ -1,6 +1,7 @@
 const express = require("express")
 const magicitemController = require("../controller/MagicItemController");
 const buffController = require("../controller/BuffController")
+const credentialsController = require("../controller/CredentialsController")
 
 const router = express.Router()
 
@@ -15,5 +16,8 @@ router.put("/buffs/:id", buffController.editBuff)
 router.delete("/items/:id", magicitemController.deleteMagicItem)
 router.delete("/buffs/:id", buffController.deleteBuff)
 router.get("/faker/:count", magicitemController.getFakerData)
+router.post("/register", credentialsController.register)
+router.post("/login", credentialsController.login)
+router.get("/user", credentialsController.getUser)
 
 module.exports = router

@@ -27,8 +27,8 @@ async function getRowCount() {
 }
 
 const getAllMagicItems = async (req, res) => {
-    const CLIENTS = await getAllMagicItemsAsync();
-    res.send(CLIENTS);
+    const ITEMS = await getAllMagicItemsAsync();
+    res.send(ITEMS);
 };
 
 async function getMagicItemByIDAsync(id) {

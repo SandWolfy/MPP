@@ -14,3 +14,21 @@
 .info-text {
     margin-right: 10px;
 }
+
+.login-switch-text {
+    font-size: 15px;
+    color: aqua;
+    margin: 5px;
+}
+
+.person-picture {
+    width: 60px;
+    float: right;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
+
+.error-msg {
+    color: red;
+}
