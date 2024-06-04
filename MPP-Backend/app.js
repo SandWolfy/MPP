@@ -2,11 +2,16 @@ const express = require("express")
 const cors = require("cors");
 const bodyParser = require("body-parser")
 const router = require("./routes/router")
-const { Server } = require('socket.io');
+// const { Server } = require('socket.io');
 
 const app = express();
-const server = require("http").createServer(app)
-const io = new Server(server);
+const fs = require('fs');
+const options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+  };
+const server = require("https").createServer(options, app)
+// const io = new Server(server);
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
@@ -14,10 +19,10 @@ app.use(bodyParser.urlencoded({extended:false}))
 const PORT = 3000;
 app.use(cors())
 
-app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    next();
-})
+// app.use((req, res, next) => {
+//     res.setHeader("Access-Control-Allow-Origin", "*");
+//     next();
+// })
 
 app.use('/', router)
 

@@ -9,38 +9,40 @@ declare global {
 }
 
 type Props = {
-    onBackBtnClickHnd: () => void
+    authentificate: (user: IUser) => void
 }
 
 function LoginComponent(props: Props) {
-    const { onBackBtnClickHnd } = props
+    const { authentificate } = props
 
     const [registerVisible, setRegisterVisible] = useState(false)
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [role, setRole] = useState('user')
     const [errorMsg, setErrorMsg] = useState('')
-    const [loggedIn, setLoggedIn] = useState(false)
-    const [userData, setUserData] = useState({} as IUser)
 
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token')
 
-            const response = await axios.get('//localhost:3000/user', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-            setUserData(response.data[0])
-
-            if (token) {
-                setLoggedIn(true)
-            }
+            authWithToken(token)
         }
 
         fetchData()
     }, [])
+
+    const authWithToken = async (token: any) => {
+        if (token) {
+            const response = await axios.get('https://localhost:3000/user', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+
+            authentificate(response.data[0])
+        }
+    }
 
     const onUsernameChangeHnd = (e: any) => {
         setUsername(e.target.value)
@@ -48,6 +50,10 @@ function LoginComponent(props: Props) {
 
     const onPasswordChangeHnd = (e: any) => {
         setPassword(e.target.value)
+    }
+
+    const onRoleChangeHnd = (e: any) => {
+        setRole(e.target.value)
     }
 
     const switchMode = () => {
@@ -63,10 +69,11 @@ function LoginComponent(props: Props) {
     }
 
     const register = () => {
-        axios.post('//localhost:3000/register', { username, password }).then(
+        axios.post('https://localhost:3000/register', { username, password, role }).then(
             res => {
                 const token = res.data
                 localStorage.setItem('token', token)
+                authWithToken(token)
             },
             err => {
                 setErrorMessage(err.response.data)
@@ -75,10 +82,11 @@ function LoginComponent(props: Props) {
     }
 
     const login = () => {
-        axios.post('//localhost:3000/login', { username, password }).then(
+        axios.post('https://localhost:3000/login', { username, password, role }).then(
             res => {
                 const token = res.data
                 localStorage.setItem('token', token)
+                authWithToken(token)
             },
             err => {
                 setErrorMessage(err.response.data)
@@ -103,36 +111,35 @@ function LoginComponent(props: Props) {
         <>
             <div className='modal-background'></div>
             <div className='modal-content modal-small'>
-                {!loggedIn && (
-                    <>
-                        {!registerVisible && <h2>Login</h2>}
-                        {registerVisible && <h2>Register</h2>}
-                        <div>
-                            <label>Username: </label>
-                            <input className='modal-text-input' type='text' value={username} onChange={onUsernameChangeHnd} />
-                        </div>
-                        <div>
-                            <label>Password: </label>
-                            <input className='modal-text-input' type='password' value={password} onChange={onPasswordChangeHnd} />
-                        </div>
-                        <div className='login-switch-text' onClick={switchMode}>
-                            Switch to {registerVisible && 'Login'} {!registerVisible && 'Register'}
-                        </div>
-                        <div>
-                            <input className='modal-button-input' type='button' onClick={submitForm} value={registerVisible ? 'Register' : 'Login'} />
-                            <input className='modal-button-input' type='button' value='Cancel' onClick={onBackBtnClickHnd} />
-                        </div>
-                        <div className='error-msg'>{errorMsg}</div>
-                    </>
+                {!registerVisible && <h2>Login</h2>}
+                {registerVisible && <h2>Register</h2>}
+                <div>
+                    <label>Username: </label>
+                    <input data-cy='usernameField' className='modal-text-input' type='text' value={username} onChange={onUsernameChangeHnd} />
+                </div>
+                <div>
+                    <label>Password: </label>
+                    <input data-cy='passwordField' className='modal-text-input' type='password' value={password} onChange={onPasswordChangeHnd} />
+                </div>
+                {registerVisible && (
+                    <div>
+                        <label>Role: </label>
+                        <select onChange={onRoleChangeHnd}>
+                            <option value='user'>User</option>
+                            <option value='manager'>Manager</option>
+                            <option value='admin'>Admin</option>
+                        </select>
+                    </div>
                 )}
-                {loggedIn && (
-                    <>
-                        <div>Welcome to your profile {userData.username}</div>
-                        <div>Here is your bio:</div>
-                        <div>{userData.description}</div>
-                        <input className='modal-button-input' type='button' value='Close' onClick={onBackBtnClickHnd} />
-                    </>
-                )}
+                <div data-cy='loginSwitch' className='login-switch-text' onClick={switchMode}>
+                    Switch to {registerVisible && 'Login'} {!registerVisible && 'Register'}
+                </div>
+                <div>
+                    <input data-cy='authButton' className='modal-button-input' type='button' onClick={submitForm} value={registerVisible ? 'Register' : 'Login'} />
+                </div>
+                <div data-cy='errorMessage' className='error-msg'>
+                    {errorMsg}
+                </div>
             </div>
         </>
     )

@@ -28,7 +28,7 @@ const NetworkProvider = ({ children }: NetworkProviderProps) => {
 
         checkOnlineStatus()
 
-        const interval = setInterval(checkOnlineStatus, 1000)
+        const interval = setInterval(checkOnlineStatus, 2500)
 
         return () => clearInterval(interval)
     }, [])
@@ -36,7 +36,7 @@ const NetworkProvider = ({ children }: NetworkProviderProps) => {
     useEffect(() => {
         const checkServerStatus = async () => {
             try {
-                await axios.get('//localhost:3000/items')
+                await axios.get('https://localhost:3000/items')
                 setServerStatus(true)
             } catch (e) {
                 setServerStatus(false)
@@ -45,7 +45,7 @@ const NetworkProvider = ({ children }: NetworkProviderProps) => {
 
         checkServerStatus()
 
-        const interval = setInterval(checkServerStatus, 1000)
+        const interval = setInterval(checkServerStatus, 2500)
 
         return () => clearInterval(interval)
     }, [])
@@ -55,7 +55,7 @@ const NetworkProvider = ({ children }: NetworkProviderProps) => {
             setStorageLocation(internetStatus && serverStatus ? 'server' : 'local')
         }
 
-        const interval = setInterval(intervalStorageChanges, 1000)
+        const interval = setInterval(intervalStorageChanges, 2500)
 
         return () => clearInterval(interval)
     }, [internetStatus, serverStatus])

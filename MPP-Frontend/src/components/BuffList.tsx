@@ -1,17 +1,18 @@
 import { useState } from 'react'
 import BuffListContents from './BuffListContents'
-import { IBuff } from './Interfaces'
+import { IBuff, IUser } from './Interfaces'
 import './MagicItemList.css'
 
 type Props = {
     list: IBuff[]
     filter: string
+    userdata: IUser
     onDeleteClickHnd: (data: IBuff) => void
     onEditClickHnd: (data: IBuff) => void
 }
 
 function BuffList(props: Props) {
-    const { list, filter, onDeleteClickHnd, onEditClickHnd } = props
+    const { list, filter, userdata, onDeleteClickHnd, onEditClickHnd } = props
 
     const [currentPage, setCurrentPage] = useState(1)
 
@@ -53,9 +54,9 @@ function BuffList(props: Props) {
                     <td>ItemID</td>
                     <td>Name</td>
                     <td>Intensity</td>
-                    <td>Actions</td>
+                    {userdata.role != 0 && <td>Actions</td>}
                 </tr>
-                <BuffListContents list={records} onDeleteClickHnd={onDeleteClickHnd} onEditClickHnd={onEditClickHnd} />
+                <BuffListContents list={records} userdata={userdata} onDeleteClickHnd={onDeleteClickHnd} onEditClickHnd={onEditClickHnd} />
             </table>
             <div>
                 <input className='input-button' type='button' value='<' onClick={prevPage} />

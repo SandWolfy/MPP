@@ -9,7 +9,7 @@
 //     const [itemList, setItemList] = useState([])
 
 //     useEffect(() => {
-//         axios.get('//localhost:4000').then(res => {
+//         axios.get('https://localhost:4000').then(res => {
 //             setItemList(res.data)
 //         })
 //     }, [])
@@ -19,13 +19,13 @@
 //     }
 
 //     const deleteMagicItem = (data: IMagicItem) => {
-//         axios.delete(`//localhost:4000/` + data.id).then(res => {
+//         axios.delete(`https://localhost:4000/` + data.id).then(res => {
 //             setItemList(res.data)
 //         })
 //     }
 
 //     const updateMagicItem = (data: IMagicItem) => {
-//         axios.put(`//localhost:4000/'` + data.id, data).then(res => {
+//         axios.put(`https://localhost:4000/'` + data.id, data).then(res => {
 //             setItemList(res.data)
 //         })
 //     }

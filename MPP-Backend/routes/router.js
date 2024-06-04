@@ -18,6 +18,10 @@ router.delete("/buffs/:id", buffController.deleteBuff)
 router.get("/faker/:count", magicitemController.getFakerData)
 router.post("/register", credentialsController.register)
 router.post("/login", credentialsController.login)
+router.get("/users", credentialsController.getAllUsers)
+router.post("/users", credentialsController.createUser)
+router.put("/users/:id", credentialsController.editUser)
+router.delete("/users/:id", credentialsController.deleteUser)
 router.get("/user", credentialsController.getUser)
 
 module.exports = router

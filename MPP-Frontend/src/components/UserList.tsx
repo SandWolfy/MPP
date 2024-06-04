@@ -1,25 +1,24 @@
 import { useState } from 'react'
-import { IMagicItem, IUser } from './Interfaces'
+import { IUser } from './Interfaces'
 import './MagicItemList.css'
-import MagicItemListContents from './MagicItemListContents'
+import UserListContents from './UserListContents'
 
 type Props = {
-    list: IMagicItem[]
+    list: IUser[]
     filter: string
-    userdata: IUser
-    onDeleteClickHnd: (data: IMagicItem) => void
-    onEditClickHnd: (data: IMagicItem) => void
+    onDeleteClickHnd: (data: IUser) => void
+    onEditClickHnd: (data: IUser) => void
 }
 
-function MagicItemList(props: Props) {
-    const { list, filter, userdata, onDeleteClickHnd, onEditClickHnd } = props
+function UserList(props: Props) {
+    const { list, filter, onDeleteClickHnd, onEditClickHnd } = props
 
     const [currentPage, setCurrentPage] = useState(1)
 
-    const contentLength = filter == '' ? list.length : list.filter(x => x.name.includes(filter)).length
+    const contentLength = filter == '' ? list.length : list.filter(x => x.username.includes(filter)).length
     const recordsPerPage = 10
     const firstIndex = (currentPage - 1) * recordsPerPage
-    const records = filter == '' ? list.slice(firstIndex, firstIndex + recordsPerPage) : list.filter(x => x.name.includes(filter)).slice(firstIndex, firstIndex + recordsPerPage)
+    const records = filter == '' ? list.slice(firstIndex, firstIndex + recordsPerPage) : list.filter(x => x.username.includes(filter)).slice(firstIndex, firstIndex + recordsPerPage)
     const pageCount = Math.ceil(contentLength / recordsPerPage)
 
     let numbers
@@ -51,13 +50,12 @@ function MagicItemList(props: Props) {
         <>
             <table>
                 <tr>
-                    <td>Name</td>
-                    <td>Location</td>
-                    <td>Usable Classes</td>
-                    <td>Price</td>
-                    {userdata.role != 0 && <td>Actions</td>}
+                    <td>Username</td>
+                    <td>Role</td>
+                    <td>Description</td>
+                    <td>Actions</td>
                 </tr>
-                <MagicItemListContents list={records} userdata={userdata} onDeleteClickHnd={onDeleteClickHnd} onEditClickHnd={onEditClickHnd} />
+                <UserListContents list={records} onDeleteClickHnd={onDeleteClickHnd} onEditClickHnd={onEditClickHnd} />
             </table>
             <div>
                 <input className='input-button' type='button' value='<' onClick={prevPage} />
@@ -70,4 +68,4 @@ function MagicItemList(props: Props) {
     )
 }
 
-export default MagicItemList
+export default UserList

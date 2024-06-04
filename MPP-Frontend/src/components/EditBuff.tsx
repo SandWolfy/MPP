@@ -60,7 +60,7 @@ function EditBuff(props: Props) {
                     </div>
                     <div>
                         <input className='modal-button-input' type='button' value='Back' onClick={onBackBtnClickHnd} />
-                        <input className='modal-button-input' type='submit' value='Update Buffs' />
+                        <input className='modal-button-input' type='submit' value='Update Buff' />
                     </div>
                 </form>
             </div>

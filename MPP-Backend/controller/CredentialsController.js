@@ -22,12 +22,113 @@ async function getUserById(id) {
     return result.recordset;
 }
 
-async function addUser(username, password) {
+async function addUserAsync(username, password, role) {
     const pool = await sql.connect(config);
-    const result = await pool.request().query(`INSERT INTO [Credentials]([username], [password]) VALUES ('${username}', '${password}')`);
+    const result = await pool.request().query(`INSERT INTO [Credentials]([username], [password], [role]) VALUES ('${username}', '${password}', ${role})`);
     await pool.close();
     return result.rowsAffected;
 }
+
+const createUser = async (req, res) => {
+    const user = req.body;
+    if (!user.username || user.username == "") {
+        console.error("No username was provided for the user");
+        res.status(404).json("No username was provided for the user");
+        return;
+    }
+    if (!user.password || user.password == "") {
+        console.error("No password was provided for the user");
+        res.status(404).json("No password was provided for the user");
+        return;
+    }
+    if (user.role != 'user' && user.role != 'manager' && user.role != 'admin') {
+        console.error("The role provided is invalid!");
+        res.status(404).json("The role provided is invalid!");
+        return;
+    }
+
+    try {
+        var roleId = 0;
+        if (user.role == 'manager') roleId = 1;
+        else if (user.role == 'admin') roleId = 2;
+
+        await addUserAsync(user.username, user.password, Number(roleId));
+    } catch (error) {
+        console.error('Error retrieving userrs', error);
+        return;
+    }
+    res.send(user);
+}
+
+async function userNotExists(id) {
+    const pool = await sql.connect(config); 
+    const result = await pool.request().query(`SELECT * FROM [Credentials] WHERE id = '${id}'`);
+    await pool.close();
+    return result.recordset.length == 0;
+}
+
+async function editUserAsync(id, username, role, description) {
+    const pool = await sql.connect(config); 
+    const result = await pool.request().query(`UPDATE [Credentials] SET username = '${username}', role = ${role}, description = '${description}' WHERE [id] = '${id}'`);
+    await pool.close();
+    return result.rowsAffected;
+}
+
+const editUser = async (req, res) => {
+    const user = req.body;
+    if (!user.username || user.username == "") {
+        console.error("No username was provided for the user");
+        res.status(404).json("No username was provided for the user");
+        return;
+    }
+    if (Number(user.role) < 0 || Number(user.role) > 2) {
+        console.error("The role provided is invalid!");
+        res.status(404).json("The role provided is invalid!");
+        return;
+    }
+
+    try {
+        const result = await userNotExists(Number(user.id));
+        if (result == true) {
+            console.error('There exists no user with the provided id');
+            return;
+        }
+    } catch (error) {
+        console.error('Error retrieving users', error);
+        return;
+    }
+    try {
+        await editUserAsync(Number(user.id), user.username, Number(user.role), user.description);
+    } catch (error) {
+        console.error('Error while updating users', error);
+        return;
+    }
+    const result = await getAllUsersAsync();
+    res.send(result);
+}
+
+async function deleteUserAsync(id) {
+    const pool = await sql.connect(config); 
+    const result = await pool.request().query(`DELETE FROM [Credentials] WHERE id = ${id}`);
+    await pool.close();
+    return result.rowsAffected;
+}
+
+const deleteUser = async (req, res) => {
+    const deleteID = req.params.id;
+
+    try {
+        const aux = await deleteUserAsync(Number(deleteID));
+        if (aux == 0) {
+            console.error('Error deleting the user');
+        }
+        const result = await getAllUsersAsync();
+        res.status(200).send(result);
+    } catch (error) {
+        console.error('Error deleting user.', error);
+    }
+}
+
 
 const register = async (req, res) => {
     const user = req.body;
@@ -41,6 +142,11 @@ const register = async (req, res) => {
         res.status(404).json("No password was provided for the user");
         return;
     }
+    if (user.role != 'user' && user.role != 'manager' && user.role != 'admin') {
+        console.error("The role provided is invalid!");
+        res.status(404).json("The role provided is invalid!");
+        return;
+    }
 
     const foundUsers = await getUserByUsername(user.username);
     if (foundUsers.length > 0) {
@@ -49,11 +155,15 @@ const register = async (req, res) => {
         return;
     }
 
+    var roleId = 0;
+    if (user.role == 'manager') roleId = 1;
+    else if (user.role == 'admin') roleId = 2;
+
     const hashedPassword = await bcrypt.hash(user.password, 10);
     try {
-        await addUser(user.username, hashedPassword);
+        await addUserAsync(user.username, hashedPassword, roleId);
     } catch (error) {
-        console.error("Error while adding the magic item!", error);
+        console.error("Error while adding the user!", error);
         return;
     }
 
@@ -106,8 +216,24 @@ const getUser = async (req, res) => {
     }
 };
 
+async function getAllUsersAsync() {
+    const pool = await sql.connect(config); 
+    const result = await pool.request().query(`SELECT * FROM Credentials`);
+    await pool.close();
+    return result.recordset;
+}
+
+const getAllUsers = async (req, res) => {
+    const USERS = await getAllUsersAsync()
+    res.send(USERS)
+}
+
 module.exports = {
     register,
     login,
     getUser,
+    getAllUsers,
+    createUser,
+    editUser,
+    deleteUser
 };
